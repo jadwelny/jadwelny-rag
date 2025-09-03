@@ -1,4 +1,5 @@
-from fastapi import FastAPI, APIRouter, Depends, UploadFile, status
+from bson import ObjectId
+from fastapi import FastAPI, APIRouter, Depends, UploadFile, status, Request
 from fastapi.responses import JSONResponse
 from helpers.config import get_settings, Settings
 from controllers import DataController, BucketController, ProcessController
@@ -7,6 +8,9 @@ import aiofiles
 import os
 import logging
 from routers import ProcessRequest
+from models.project_model import ProjectModel
+from models.chunk_model import ChunkModel
+from models.db_schemes import DataChunk
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -16,14 +20,18 @@ data_router = APIRouter(
 )
 
 @data_router.post("/upload/{project_id}")
-async def upload_file(project_id: str, file: UploadFile, app_settings:Settings=Depends(get_settings)):
+async def upload_file(request: Request, project_id: str, file: UploadFile, app_settings:Settings=Depends(get_settings)):
+    project_model = ProjectModel(db_client=request.app.db_client)
+    project = await project_model.get_project_or_create(project_id=project_id)
     dataController = DataController()
     is_valid, message = dataController.validate_uploaded_file(file=file)
     if not is_valid:
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={
-                "signal": message
+                "signal": message,
+                "file_id": file_id,
+                "project_id": str(project.id),
             }
         )
     
@@ -53,10 +61,16 @@ async def upload_file(project_id: str, file: UploadFile, app_settings:Settings=D
     )
 
 @data_router.post("/process/{project_id}")
-async def process_file(project_id: str, request: ProcessRequest):
-    file_id = request.file_id
-    chunk_size = request.chunk_size
-    overlap_size = request.overlap_size
+async def process_file(request: Request,project_id: str, process_request: ProcessRequest):
+    file_id = process_request.file_id
+    chunk_size = process_request.chunk_size
+    overlap_size = process_request.overlap_size
+
+    project_model = ProjectModel(db_client=request.app.db_client)
+    project = await project_model.get_project_or_create(project_id=project_id)
+    print("------------------------------ PROCESSING FILE ------------------------------")
+    print(f"Project ID: {project_id}, Project DB ID: {project}")
+
     process_controller = ProcessController(project_id=project_id)
     # get file content
     file_content = process_controller.get_file_content(file_id=file_id)
@@ -70,4 +84,22 @@ async def process_file(project_id: str, request: ProcessRequest):
                 "signal": ResponseSignal.FILE_PROCESSING_FAILED.value,
             }
         )
-    return file_chunks
+
+    # save file chunks
+    file_chunk_records= [
+        DataChunk (
+            chunk_text= chunk.page_content,
+            chunk_metadata= chunk.metadata,
+            chunk_order= i+1,
+            chunk_project_id= project.id,
+        )
+        for i,chunk in enumerate(file_chunks)
+    ]
+
+    chunk_model = ChunkModel(db_client=request.app.db_client)
+    no_records = await chunk_model.insert_many_chunks(chunks=file_chunk_records)
+
+    return no_records
+
+
+    # return file_chunks
