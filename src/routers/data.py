@@ -68,8 +68,6 @@ async def process_file(request: Request,project_id: str, process_request: Proces
 
     project_model = ProjectModel(db_client=request.app.db_client)
     project = await project_model.get_project_or_create(project_id=project_id)
-    print("------------------------------ PROCESSING FILE ------------------------------")
-    print(f"Project ID: {project_id}, Project DB ID: {project}")
 
     process_controller = ProcessController(project_id=project_id)
     # get file content
