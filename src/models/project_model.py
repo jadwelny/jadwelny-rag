@@ -7,6 +7,21 @@ class ProjectModel(BaseDataModel):
         super().__init__(db_client=db_client)
         self.collection = self.db_client[DatabaseEnum.COLLECTION_PROJECTS_NAME.value]
 
+    @classmethod 
+    async def create_instance(cls, db_client: object): 
+        instance = cls(db_client)
+        await instance.init_collection()
+        return instance
+
+    async def init_collection(self):
+        all_collections = await self.db_client.list_collection_names()
+        if DatabaseEnum.COLLECTION_PROJECTS_NAME.value not in all_collections:
+            await self.db_client.create_collection(DatabaseEnum.COLLECTION_PROJECTS_NAME.value)
+            # create indices
+            indices = Project.get_indices()
+            for index in indices:
+                await self.collection.create_index(index["key"], name=index["name"], unique=index.get("unique", False))
+
     async def create_project(self, project: Project):
         result = await self.collection.insert_one(project.model_dump(by_alias=True, exclude_unset=True))
         project.id = result.inserted_id
