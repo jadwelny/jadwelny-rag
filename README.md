@@ -48,3 +48,41 @@ Set your environment variables in the `.env` file. Like `OPENAI_API_KEY` value.
 ```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 5000
 ```
+
+## Reset docker on devs
+
+### stop all the running containers
+
+```bash
+sudo docker stop $(sudo docker ps -aq)
+```
+
+### remove all the running containers
+
+```bash
+sudo docker rm $(sudo docker ps -aq)
+```
+
+### remove all the images I downloaded from dockerhub
+
+```bash
+sudo docker rmi $(sudo docker images -q)
+```
+
+### remove all the volumes
+
+```bash
+sudo docker volume rm $(sudo docker volume ls -q)
+```
+
+### remove what left
+
+```bash
+sudo docker system prune --all
+```
+
+### reset all
+
+```bash
+sudo docker stop $(sudo docker ps -aq); sudo docker rm $(sudo docker ps -aq); sudo docker rmi $(sudo docker images -q); sudo docker volume rm $(sudo docker volume ls -q); sudo docker system prune --all
+```
