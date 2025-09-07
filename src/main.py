@@ -3,7 +3,11 @@ from routers import base, data
 from helpers.config import get_settings
 from motor.motor_asyncio import AsyncIOMotorClient
 
-app = FastAPI() 
+settings = get_settings()
+app = FastAPI(
+    title= settings.app_name,
+    version=settings.app_version
+) 
 
 @app.on_event("startup")
 async def startup_db_client():
