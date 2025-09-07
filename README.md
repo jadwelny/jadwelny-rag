@@ -86,3 +86,23 @@ sudo docker system prune --all
 ```bash
 sudo docker stop $(sudo docker ps -aq); sudo docker rm $(sudo docker ps -aq); sudo docker rmi $(sudo docker images -q); sudo docker volume rm $(sudo docker volume ls -q); sudo docker system prune --all
 ```
+
+## Steps to Add a New Table
+
+Follow these steps to properly add a new table to the project:
+
+1. **Create the Schema**  
+   - Go to `models/db_schema` and define a new schema for the table.  
+   - Include all the table specifications and constraints.
+
+2. **Add an Enum**  
+   - In `models/enums/db_enums`, create an Enum for the new table.  
+   - This helps maintain consistency for table references throughout the project.
+
+3. **Create the Table Model**  
+   - Under `models`, create a model for the table using the schema defined in step 1.  
+
+4. **Update Routes**  
+   - Either create a new route or use an existing one.  
+   - Add the necessary endpoint logic for CRUD operations on the new table.
+
