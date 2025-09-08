@@ -1,27 +1,31 @@
 from .base_data_model import BaseDataModel
 from .db_schemes import Asset
-from .enums.database_enum import DatabaseEnum
+from .enums.database_enum import DataBaseEnum
 from bson import ObjectId
 
 class AssetModel(BaseDataModel):
-    def __init__(self, db_client:object):
+
+    def __init__(self, db_client: object):
         super().__init__(db_client=db_client)
-        self.collection = self.db_client[DatabaseEnum.COLLECTION_ASSETS_NAME.value]
+        self.collection = self.db_client[DataBaseEnum.COLLECTION_ASSET_NAME.value]
 
     @classmethod
-    async def create_instance(cls, db_client: object): 
+    async def create_instance(cls, db_client: object):
         instance = cls(db_client)
         await instance.init_collection()
         return instance
-    
+
     async def init_collection(self):
         all_collections = await self.db_client.list_collection_names()
-        if DatabaseEnum.COLLECTION_ASSETS_NAME.value not in all_collections:
-            await self.db_client.create_collection(DatabaseEnum.COLLECTION_ASSETS_NAME.value)
-            # create indices
-            indices = Asset.get_indices()
-            for index in indices:
-                await self.collection.create_index(index["key"], name=index["name"], unique=index.get("unique", False))
+        if DataBaseEnum.COLLECTION_ASSET_NAME.value not in all_collections:
+            self.collection = self.db_client[DataBaseEnum.COLLECTION_ASSET_NAME.value]
+            indexes = Asset.get_indexes()
+            for index in indexes:
+                await self.collection.create_index(
+                    index["key"],
+                    name=index["name"],
+                    unique=index["unique"]
+                )
 
     async def create_asset(self, asset: Asset):
 
@@ -53,3 +57,6 @@ class AssetModel(BaseDataModel):
             return Asset(**record)
         
         return None
+
+
+    

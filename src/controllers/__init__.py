@@ -1,3 +1,3 @@
 from .data_controller import DataController
-from .bucket_controller import BucketController
+from .project_controller import ProjectController
 from .process_controller import ProcessController

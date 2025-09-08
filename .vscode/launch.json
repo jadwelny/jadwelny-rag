@@ -11,10 +11,10 @@
 //             "request": "launch",
 //             "module": "uvicorn",
 //             "args": [
-//                 "src.main:app",
+//                 "main:app",
 //                 "--reload"
 //             ],
 //             "jinja": true
 //         }
 //     ]
-// }
+// 
