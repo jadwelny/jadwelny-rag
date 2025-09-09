@@ -106,3 +106,13 @@ Follow these steps to properly add a new table to the project:
    - Either create a new route or use an existing one.  
    - Add the necessary endpoint logic for CRUD operations on the new table.
 
+
+<!-- markdownlint-disable MD033 -->
+
+## LLM Factory
+
+<p align="center">
+  <img src="readme_images/llm_factory.png" alt="LLM Factory Diagram" width="60%">
+</p>
+
+<!-- markdownlint-enable MD033 -->
