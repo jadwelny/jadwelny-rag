@@ -7,4 +7,4 @@ class LLMEnum(Enum):
 class OpenAIEnum(Enum):
     SYSTEM = "system"
     USER = "user"
-    ASSISTANT = "assistant"
+    ASSISTANT = "assistant" 

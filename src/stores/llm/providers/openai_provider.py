@@ -4,7 +4,7 @@ from llm_enum import OpenAIEnum
 import logging
 
 
-class openai_provider(LLMInterface):
+class OpenAIProvider(LLMInterface):
     def __init__(self, api_key: str, api_url: str = None, default_input_max_characters: int = 1000, default_output_max_characters: int = 1000,
                  default_generate_temperature: float = 0.1):
         self.api_key = api_key
@@ -73,7 +73,7 @@ class openai_provider(LLMInterface):
             
             response = self.client.embeddings.create(
                 model = self.embedding_model_id,
-                input = text
+                input = text,
             )
 
             if not response or not response["data"] or len(response["data"]) == 0 or not response["data"][0] or not response["data"][0]["embedding"]:
