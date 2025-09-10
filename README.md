@@ -6,7 +6,7 @@ This is a minimal implementation of the RAG model for question answering.
 
 - Python 3.8 or later
 
-#### Install Python using MiniConda
+### Install Python using MiniConda
 
 1) Download and install MiniConda from [here](https://docs.anaconda.com/free/miniconda/#quick-command-line-install)
 2) Create a new environment using the following command:
@@ -106,3 +106,14 @@ Follow these steps to properly add a new table to the project:
    - Either create a new route or use an existing one.  
    - Add the necessary endpoint logic for CRUD operations on the new table.
 
+<!-- markdownlint-disable MD033 -->
+
+## LLM Factory
+
+<p align="center">
+  <img src="readme_images/llm_factory.png" alt="LLM Factory Diagram" width="60%">
+</p>
+
+<!-- markdownlint-enable MD033 -->
+
+## Vector DB | QDRANT
